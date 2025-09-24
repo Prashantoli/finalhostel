@@ -1,9 +1,9 @@
-version: '3.8'
+
 
 services:
   # MongoDB database
   mongodb:
-    image: mongo:7.0
+    image: mongo:4.4
     container_name: nepal-hostel-db
     restart: always
     ports:
@@ -11,7 +11,7 @@ services:
     environment:
       MONGO_INITDB_DATABASE: nepal_hostel_finder
     volumes:
-      - mongodb_data:/data/db
+      - /opt/mongo-data:/data/db
     networks:
       - hostel-network
 
@@ -21,7 +21,7 @@ services:
     container_name: nepal-hostel-app
     restart: always
     ports:
-      - "3000:3000"
+      - "3004:3000"
     environment:
       - NODE_ENV=production
       - MONGODB_URI=mongodb://mongodb:27017/nepal_hostel_finder
@@ -33,7 +33,8 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-
+      - /opt/hostel-app/uploads:/app/uploads  
+      - /opt/hostel-app/logs:/app/logs 
 # Define volumes for data persistence
 volumes:
   mongodb_data:
