@@ -1,5 +1,3 @@
-
-
 services:
   # MongoDB database
   mongodb:
@@ -11,7 +9,7 @@ services:
     environment:
       MONGO_INITDB_DATABASE: nepal_hostel_finder
     volumes:
-      - /opt/mongo-data:/data/db
+      - mongodb_data:/data/db
     networks:
       - hostel-network
 
@@ -21,11 +19,13 @@ services:
     container_name: nepal-hostel-app
     restart: always
     ports:
-      - "3004:3000"
-    environment:
-      - NODE_ENV=production
-      - MONGODB_URI=mongodb://mongodb:27017/nepal_hostel_finder
-      - JWT_SECRET=nepal-hostel-finder-secret-key-docker
+      - "3000:3000"
+    env_file:
+      - .env 
+        #environment:
+        # - NODE_ENV=production
+        # - MONGODB_URI=mongodb://mongodb:27017/nepal_hostel_finder
+        #- JWT_SECRET=nepal-hostel-finder-secret-key-docker
     depends_on:
       - mongodb
     networks:
@@ -33,8 +33,7 @@ services:
     volumes:
       - .:/app
       - /app/node_modules
-      - /opt/hostel-app/uploads:/app/uploads  
-      - /opt/hostel-app/logs:/app/logs 
+
 # Define volumes for data persistence
 volumes:
   mongodb_data:
