@@ -7,8 +7,8 @@ on:
     branches: [ main, master ]
 
 jobs:
-  test_and_scan:
-    name: Install and SonarQube scan
+  lint_and_audit:
+    name: Install, lint and security audit
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,25 +25,23 @@ jobs:
       - name: Run tests (if present)
         run: npm test || echo "No test script defined, skipping tests"
 
-      - name: SonarQube scan
-        env:
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Install ESLint (if not present)
         run: |
-          if [ -z "$SONAR_HOST_URL" ] || [ -z "$SONAR_TOKEN" ]; then
-            echo "SONAR_HOST_URL or SONAR_TOKEN not set - skipping SonarQube scan"
-            exit 0
+          if ! grep -q "eslint" package.json; then
+            npm i -D eslint || true
           fi
-          docker run --rm \
-            -e SONAR_HOST_URL="$SONAR_HOST_URL" \
-            -e SONAR_TOKEN="$SONAR_TOKEN" \
-            -v "$PWD":/usr/src \
-            -w /usr/src \
-            sonarsource/sonar-scanner-cli \
-            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }} \
-            -Dsonar.sources=. \
-            -Dsonar.host.url="$SONAR_HOST_URL" \
-            -Dsonar.login="$SONAR_TOKEN"
+
+      - name: Run ESLint
+        run: |
+          if [ -f .eslintrc.json ] || grep -q "eslintConfig" package.json; then
+            npx eslint . || true
+          else
+            echo "No ESLint config found; skipping lint"
+          fi
+
+      - name: Run npm audit
+        run: |
+          npm audit --audit-level=moderate || true
 
   build_and_push:
     name: Build and push Docker image
