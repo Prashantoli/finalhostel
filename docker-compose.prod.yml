@@ -1,0 +1,33 @@
+services:
+  mongodb:
+    image: mongo:4.4
+    container_name: nepal-hostel-db
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: nepal_hostel_finder
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - hostel-network
+
+  app:
+    image: ${DOCKERHUB_USERNAME}/nepal-hostel-finder:latest
+    container_name: nepal-hostel-app
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - mongodb
+    networks:
+      - hostel-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  hostel-network:
+    driver: bridge

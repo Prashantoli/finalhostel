@@ -28,3 +28,28 @@ Continue building your app on:
 2. Deploy your chats from the v0 interface
 3. Changes are automatically pushed to this repository
 4. Vercel deploys the latest version from this repository
+
+## CI/CD
+
+This project includes a simple GitHub Actions pipeline in `.github/workflows/cicd.yml`.
+
+- `docker` job builds the Docker image and pushes it to Docker Hub on pushes to `main` or `master`
+
+Set these GitHub repository secrets:
+
+- `DOCKERHUB_USERNAME`
+- `DOCKERHUB_TOKEN`
+
+## VM Deployment
+
+The VM does not need to be called by GitHub Actions. The pipeline only pushes the latest image to Docker Hub.
+
+On the VM:
+
+- use `docker-compose.prod.yml` to run the app from Docker Hub
+- set `DOCKERHUB_USERNAME` in the VM shell or `.env`
+- run `scripts/update-vm.sh` to pull the latest image and restart the app
+
+Example cron entry on the VM:
+
+`*/5 * * * * cd /path/to/finalhostel && DOCKERHUB_USERNAME=your-dockerhub-user /bin/bash scripts/update-vm.sh >> /var/log/finalhostel-update.log 2>&1`
