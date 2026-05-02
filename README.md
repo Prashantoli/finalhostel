@@ -40,7 +40,6 @@ Set these GitHub repository secrets:
 
 - `SONAR_HOST_URL`
 - `SONAR_TOKEN`
-- `DOCKERHUB_USERNAME`
 - `DOCKERHUB_TOKEN`
 
 ## VM Deployment
@@ -50,9 +49,8 @@ The VM does not need to be called by GitHub Actions. The pipeline only pushes th
 On the VM:
 
 - use `docker-compose.prod.yml` to run the app from Docker Hub
-- set `DOCKERHUB_USERNAME` in the VM shell or `.env`
 - run `scripts/update-vm.sh` to pull the latest image and restart the app
 
 Example cron entry on the VM:
 
-`*/5 * * * * cd /path/to/finalhostel && DOCKERHUB_USERNAME=your-dockerhub-user /bin/bash scripts/update-vm.sh >> /var/log/finalhostel-update.log 2>&1`
+`*/5 * * * * cd /path/to/finalhostel && /bin/bash scripts/update-vm.sh >> /var/log/finalhostel-update.log 2>&1`

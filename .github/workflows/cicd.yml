@@ -39,7 +39,6 @@ jobs:
 
       - name: Validate Docker Hub secrets
         run: |
-          test -n "${{ secrets.DOCKERHUB_USERNAME }}" || (echo "DOCKERHUB_USERNAME is missing" && exit 1)
           test -n "${{ secrets.DOCKERHUB_TOKEN }}" || (echo "DOCKERHUB_TOKEN is missing" && exit 1)
 
       - name: Set up Docker Buildx
@@ -48,7 +47,7 @@ jobs:
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          username: prashantoli
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Docker image
@@ -57,5 +56,5 @@ jobs:
           context: .
           push: true
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/nepal-hostel-finder:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/nepal-hostel-finder:${{ github.sha }}
+            prashantoli/nepal-hostel-finder:latest
+            prashantoli/nepal-hostel-finder:${{ github.sha }}

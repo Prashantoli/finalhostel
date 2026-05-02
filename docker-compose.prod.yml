@@ -13,7 +13,7 @@ services:
       - hostel-network
 
   app:
-    image: ${DOCKERHUB_USERNAME}/nepal-hostel-finder:latest
+    image: prashantoli/nepal-hostel-finder:latest
     container_name: nepal-hostel-app
     restart: always
     ports:
