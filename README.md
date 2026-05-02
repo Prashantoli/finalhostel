@@ -33,10 +33,13 @@ Continue building your app on:
 
 This project includes a simple GitHub Actions pipeline in `.github/workflows/cicd.yml`.
 
-- `docker` job builds the Docker image and pushes it to Docker Hub on pushes to `main` or `master`
+- `sonarqube` job runs the code quality scan and waits for the quality gate result
+- `docker` job builds the Docker image and pushes it to Docker Hub only after SonarQube passes
 
 Set these GitHub repository secrets:
 
+- `SONAR_HOST_URL`
+- `SONAR_TOKEN`
 - `DOCKERHUB_USERNAME`
 - `DOCKERHUB_TOKEN`
 

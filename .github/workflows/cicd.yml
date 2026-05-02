@@ -7,8 +7,31 @@ on:
       - master
 
 jobs:
+  sonarqube:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate SonarQube secrets
+        run: |
+          test -n "${{ secrets.SONAR_HOST_URL }}" || (echo "SONAR_HOST_URL is missing" && exit 1)
+          test -n "${{ secrets.SONAR_TOKEN }}" || (echo "SONAR_TOKEN is missing" && exit 1)
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          args: >
+            -Dsonar.host.url=${{ secrets.SONAR_HOST_URL }}
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.qualitygate.wait=true
+
   docker:
     runs-on: ubuntu-latest
+    needs: sonarqube
 
     steps:
       - name: Checkout code
